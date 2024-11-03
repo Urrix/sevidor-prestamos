@@ -10,6 +10,7 @@ import { SolicitarPrestamoComponent } from './solicitar-prestamo/solicitar-prest
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { RegisterComponent } from './register/register.component';
 import { HomeComponent } from './home/home.component';
+import { MisPrestamosComponent } from './mis-prestamos/mis-prestamos.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { HomeComponent } from './home/home.component';
     SolicitarPrestamoComponent,
     NavbarComponent,
     RegisterComponent,
-    HomeComponent
+    HomeComponent,
+    MisPrestamosComponent
   ],
   imports: [
     BrowserModule,

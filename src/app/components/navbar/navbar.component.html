@@ -15,12 +15,17 @@
 
                 <!-- Enlace para "Solicitar Préstamo" solo visible para agentes -->
                 <li class="nav-item" *ngIf="isAuthenticated && userRole === 'agente'">
-                    <a class="nav-link" routerLink="/solicitar-prestamo">Solicitar Préstamo</a>
+                    <a class="nav-link" routerLink="/prestamo">Solicitar Préstamo</a>
                 </li>
 
                 <!-- Enlace para "Mis Préstamos" solo visible para clientes -->
                 <li class="nav-item" *ngIf="isAuthenticated && userRole === 'cliente'">
                     <a class="nav-link" routerLink="/mis-prestamos">Mis Préstamos</a>
+                </li>
+
+                <!-- Enlace para "Registrar" solo visible para agentes autenticados -->
+                <li class="nav-item" *ngIf="isAuthenticated && userRole === 'agente'">
+                    <a class="nav-link" routerLink="/registro">Registrar</a>
                 </li>
 
                 <!-- Enlace para "Perfil" solo visible si el usuario está autenticado -->

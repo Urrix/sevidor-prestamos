@@ -1,8 +1,10 @@
 const db = require('../db/database');
 
+// Registra una consulta en el historial de préstamos de un cliente
 exports.registrarConsultaHistorial = (req, res) => {
     const { id_cliente, id_prestamo } = req.body;
     const sql = 'INSERT INTO Historial_Prestamos (id_cliente, id_prestamo, fecha_consulta) VALUES (?, ?, NOW())';
+
     db.query(sql, [id_cliente, id_prestamo], (err, result) => {
         if (err) {
             console.error('Error al registrar consulta en el historial:', err);
@@ -12,6 +14,7 @@ exports.registrarConsultaHistorial = (req, res) => {
     });
 };
 
+// Obtiene el historial de préstamos de un cliente específico
 exports.obtenerHistorialPorCliente = (req, res) => {
     const { id_cliente } = req.params;
     const sql = `
@@ -21,15 +24,17 @@ exports.obtenerHistorialPorCliente = (req, res) => {
         WHERE h.id_cliente = ?
         ORDER BY h.fecha_consulta DESC
     `;
+
     db.query(sql, [id_cliente], (err, results) => {
         if (err) {
             console.error('Error al obtener el historial de préstamos:', err);
             return res.status(500).send('Error al obtener el historial de préstamos.');
         }
-        res.status(200).json(results);
+        res.status(200).json(results); // Retorna el historial como JSON
     });
 };
 
+// Calcula la amortización mensual de un préstamo
 exports.calcularAmortizacion = (req, res) => {
     const { monto, plazo_meses, tasa_interes } = req.body;
 
@@ -37,12 +42,12 @@ exports.calcularAmortizacion = (req, res) => {
     const pagoCapital = monto / plazo_meses;
     const tasaMensual = tasa_interes / 100 / 12;
     let saldoRestante = monto;
-
     for (let mes = 1; mes <= plazo_meses; mes++) {
         const pagoInteres = saldoRestante * tasaMensual;
         const cuota = pagoCapital + pagoInteres;
         saldoRestante -= pagoCapital;
 
+        // Añade los detalles del pago mensual al array de amortización
         amortizacion.push({
             mes,
             cuota: cuota.toFixed(2),
@@ -52,5 +57,5 @@ exports.calcularAmortizacion = (req, res) => {
         });
     }
 
-    res.status(200).json(amortizacion);
+    res.status(200).json(amortizacion); // Retorna la tabla de amortización como JSON
 };

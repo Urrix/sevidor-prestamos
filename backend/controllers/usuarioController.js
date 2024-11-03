@@ -1,17 +1,23 @@
 const db = require('../db/database');
 const bcrypt = require('bcryptjs');
 
+// Registra un nuevo usuario en la base de datos
 exports.registerUser = (req, res) => {
     const { nombre, direccion, telefono, correo, tipo_usuario, nombre_usuario, contrasena } = req.body;
-    const hashedPassword = bcrypt.hashSync(contrasena, 8);
+    const hashedPassword = bcrypt.hashSync(contrasena, 8); // Encripta la contraseña antes de guardarla
 
     const sql = 'INSERT INTO Usuario (nombre, direccion, telefono, correo, tipo_usuario, nombre_usuario, contrasena) VALUES (?, ?, ?, ?, ?, ?, ?)';
     const values = [nombre, direccion, telefono, correo, tipo_usuario, nombre_usuario, hashedPassword];
 
     db.query(sql, values, (err, result) => {
         if (err) {
+            if (err.code === 'ER_DUP_ENTRY') {
+                // Maneja el error si el usuario ya existe
+                console.error('Error de duplicado al registrar el usuario:', err);
+                return res.status(409).json({ message: 'Ya existe un usuario con este correo o nombre de usuario.' });
+            }
             console.error('Error al registrar el usuario en la base de datos:', err);
-            return res.status(500).json({ message: 'Error en el registro del usuario.', error: err });
+            return res.status(500).json({ message: 'Error en el registro del usuario.' });
         }
 
         if (result.affectedRows > 0) {
@@ -22,6 +28,7 @@ exports.registerUser = (req, res) => {
     });
 };
 
+// Maneja el inicio de sesión de un usuario
 exports.loginUser = (req, res) => {
     const { nombre_usuario, contrasena } = req.body;
     const sql = 'SELECT * FROM Usuario WHERE nombre_usuario = ?';
@@ -48,6 +55,7 @@ exports.loginUser = (req, res) => {
             const user = results[0];
 
             try {
+                // Verifica si la contraseña ingresada coincide con la almacenada
                 const passwordIsValid = bcrypt.compareSync(contrasena, user.contrasena);
                 if (!passwordIsValid) {
                     console.warn(`Contraseña incorrecta para el usuario: ${nombre_usuario}`);

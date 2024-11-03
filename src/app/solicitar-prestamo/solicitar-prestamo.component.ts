@@ -1,51 +1,67 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
+import { LoanService } from '../services/loan.service';
 
 @Component({
   selector: 'app-solicitar-prestamo',
   templateUrl: './solicitar-prestamo.component.html',
   styleUrls: ['./solicitar-prestamo.component.sass']
 })
-export class SolicitarPrestamoComponent implements OnInit {
+export class SolicitarPrestamoComponent {
   prestamoForm: FormGroup;
-  prestamos: any[] = [];
-  private authService = inject(AuthService);
+  amortizacionTable: any[] = [];
+
+  private loanService = inject(LoanService);
   private fb = inject(FormBuilder);
 
   constructor() {
     this.prestamoForm = this.fb.group({
+      id_cliente: ['', [Validators.required]],
       monto: [0, [Validators.required, Validators.min(1)]],
       plazo_meses: [0, [Validators.required, Validators.min(1)]],
       tasa_interes: [0, [Validators.required, Validators.min(0.1), Validators.max(100)]],
     });
-  }
 
-  ngOnInit() {
-    this.cargarPrestamos();
-  }
-
-  cargarPrestamos() {
-    const id_cliente = this.authService.getUserId();
-    if (!id_cliente) return;
-
-    this.authService.obtenerMisPrestamos(id_cliente).subscribe({
-      next: (data) => (this.prestamos = data),
-      error: (error) => console.error("Error al cargar los préstamos", error),
+    this.prestamoForm.valueChanges.subscribe(() => {
+      this.calcularAmortizacion();
     });
   }
 
   solicitarPrestamo() {
-    const id_cliente = this.authService.getUserId();
-    if (!id_cliente) return;
+    const { id_cliente, monto, plazo_meses, tasa_interes } = this.prestamoForm.value;
 
-    const prestamoData = { id_cliente, ...this.prestamoForm.value };
-    this.authService.solicitarPrestamo(prestamoData).subscribe({
-      next: () => {
-        console.log("Préstamo solicitado con éxito");
-        this.cargarPrestamos();
-      },
+    this.loanService.createLoan(id_cliente, monto, plazo_meses, tasa_interes).subscribe({
+      next: () => console.log("Préstamo solicitado con éxito"),
       error: (err) => console.error("Error al solicitar el préstamo", err),
     });
+  }
+
+  calcularAmortizacion() {
+    const monto = this.prestamoForm.value.monto;
+    const plazo_meses = this.prestamoForm.value.plazo_meses;
+    const tasa_interes = this.prestamoForm.value.tasa_interes / 100;
+
+    if (monto > 0 && plazo_meses > 0 && tasa_interes > 0) {
+      const capitalMensual = monto / plazo_meses;
+      this.amortizacionTable = [];
+
+      let saldo = monto;
+
+      for (let i = 1; i <= plazo_meses; i++) {
+        const interes = saldo * tasa_interes / 12;
+        const cuota = capitalMensual + interes;
+        saldo -= capitalMensual;
+
+        this.amortizacionTable.push({
+          periodo: i,
+          cuota: cuota.toFixed(2),
+          interes: interes.toFixed(2),
+          capital: capitalMensual.toFixed(2),
+          saldo: saldo > 0 ? saldo.toFixed(2) : '0.00'
+        });
+      }
+    } else {
+      this.amortizacionTable = [];
+    }
   }
 }

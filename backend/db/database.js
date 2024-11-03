@@ -1,7 +1,8 @@
 const mysql = require('mysql');
 const dotenv = require('dotenv');
-dotenv.config();
+dotenv.config(); // Carga las variables de entorno desde el archivo .env
 
+// Configuración de la base de datos utilizando variables de entorno
 const dbConfig = {
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -14,8 +15,10 @@ const dbConfig = {
     waitForConnections: true,
 };
 
+// Crea un pool de conexiones a la base de datos
 const pool = mysql.createPool(dbConfig);
 
+// Eventos del pool para registrar la actividad de las conexiones
 pool.on('connection', () => {
     console.log('Nueva conexión establecida en el pool.');
 });
@@ -28,7 +31,7 @@ pool.on('release', (connection) => {
     console.log('Conexión liberada con ID:', connection.threadId);
 });
 
-// Manejo de errores en el pool
+// Manejo de errores en el pool, intentando reconectar en caso de pérdida de conexión
 pool.on('error', (err) => {
     console.error('Error en el pool de conexiones:', err);
     if (err.code === 'PROTOCOL_CONNECTION_LOST') {
@@ -44,4 +47,4 @@ pool.on('error', (err) => {
     }
 });
 
-module.exports = pool;
+module.exports = pool; // Exporta el pool para su uso en otros módulos

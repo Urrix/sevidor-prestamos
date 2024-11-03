@@ -3,53 +3,55 @@
         <h1 class="display-5 mb-4">Solicitar Préstamo</h1>
         <form [formGroup]="prestamoForm" (ngSubmit)="solicitarPrestamo()" class="p-4 border rounded shadow-sm bg-light">
             <div class="mb-3">
+                <label for="id_cliente" class="form-label">ID del Cliente</label>
+                <input id="id_cliente" type="text" class="form-control" formControlName="id_cliente"
+                    placeholder="ID del Cliente" required />
+            </div>
+            <div class="mb-3">
                 <label for="monto" class="form-label">Monto del Préstamo</label>
                 <input id="monto" type="number" class="form-control" formControlName="monto" placeholder="Monto"
                     required />
             </div>
-
             <div class="mb-3">
                 <label for="plazo_meses" class="form-label">Plazo en Meses</label>
                 <input id="plazo_meses" type="number" class="form-control" formControlName="plazo_meses"
                     placeholder="Plazo en meses" required />
             </div>
-
             <div class="mb-3">
                 <label for="tasa_interes" class="form-label">Tasa de Interés (%)</label>
                 <input id="tasa_interes" type="number" class="form-control" formControlName="tasa_interes"
                     placeholder="Tasa de interés" required />
             </div>
-
             <div class="mb-3">
                 <button type="submit" class="btn btn-primary" [disabled]="prestamoForm.invalid">Solicitar
                     Préstamo</button>
             </div>
         </form>
 
-        <h2 class="mt-5 mb-3">Mis Préstamos Solicitados</h2>
-        <div class="table-responsive">
-            <table class="table table-striped table-bordered">
-                <thead class="table-dark">
-                    <tr>
-                        <th>ID Préstamo</th>
-                        <th>Monto</th>
-                        <th>Plazo (Meses)</th>
-                        <th>Tasa de Interés (%)</th>
-                        <th>Fecha de Solicitud</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let prestamo of prestamos">
-                        <td>{{ prestamo.id_prestamo }}</td>
-                        <td>{{ prestamo.monto | currency }}</td>
-                        <td>{{ prestamo.plazo_meses }}</td>
-                        <td>{{ prestamo.tasa_interes }}</td>
-                        <td>{{ prestamo.fecha_solicitud | date: 'short' }}</td>
-                        <td>{{ prestamo.estado }}</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div *ngIf="amortizacionTable.length > 0">
+            <h2 class="mt-5">Tabla de Amortización</h2>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">Periodo</th>
+                            <th scope="col">Cuota</th>
+                            <th scope="col">Interés</th>
+                            <th scope="col">Capital</th>
+                            <th scope="col">Saldo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let row of amortizacionTable">
+                            <td>{{ row.periodo }}</td>
+                            <td>{{ row.cuota | currency }}</td>
+                            <td>{{ row.interes | currency }}</td>
+                            <td>{{ row.capital | currency }}</td>
+                            <td>{{ row.saldo | currency }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </section>

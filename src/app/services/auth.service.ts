@@ -5,14 +5,16 @@ import { Router } from '@angular/router';
 import { tap, catchError, map } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root', // Hace que el servicio esté disponible de forma global en toda la aplicación
 })
 export class AuthService {
+  // Observables para compartir el estado de autenticación entre componentes
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   private baseUrl = 'http://localhost:3000/usuario';
 
+  // Inicializa HttpClient y Router para manejar las peticiones HTTP y la navegación
   constructor(private http: HttpClient, private router: Router) {
     const userId = this.getUserId();
     if (userId) {
@@ -20,6 +22,7 @@ export class AuthService {
     }
   }
 
+  // Método para iniciar sesión con el nombre de usuario y la contraseña
   login(nombre_usuario: string, contrasena: string): Observable<boolean> {
     const loginEndpoint = `${this.baseUrl}/login`;
 
@@ -29,11 +32,12 @@ export class AuthService {
         contrasena,
       })
       .pipe(
+        // Almacena los datos del usuario en localStorage si el inicio de sesión es exitoso
         tap((response) => {
           localStorage.setItem('userId', response.userId);
           localStorage.setItem('userName', response.name);
           localStorage.setItem('role', response.role);
-          this.isAuthenticatedSubject.next(true);
+          this.isAuthenticatedSubject.next(true); // Actualiza el estado de autenticación
         }),
         map(() => true),
         catchError((error) => {
@@ -43,6 +47,7 @@ export class AuthService {
       );
   }
 
+  // Método para cerrar sesión: limpia los datos de autenticación y redirige al usuario al login
   logout() {
     localStorage.removeItem('role');
     localStorage.removeItem('userId');
@@ -51,30 +56,22 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
+  // Obtiene el rol del usuario actual desde localStorage
   getRole(): string | null {
     return localStorage.getItem('role');
   }
 
+  // Obtiene el nombre del usuario actual desde localStorage
   getUserName(): string | null {
     return localStorage.getItem('userName');
   }
 
+  // Obtiene el ID del usuario actual desde localStorage
   getUserId(): string | null {
     return localStorage.getItem('userId');
   }
 
-  obtenerMisPrestamos(id_cliente: string): Observable<any[]> {
-    return this.http
-      .get<any[]>(`${this.baseUrl}/prestamos/${id_cliente}`)
-      .pipe(catchError((error) => throwError(() => error)));
-  }
-
-  solicitarPrestamo(prestamoData: any): Observable<any> {
-    return this.http
-      .post(`${this.baseUrl}/solicitar-prestamo`, prestamoData)
-      .pipe(catchError((error) => throwError(() => error)));
-  }
-
+  // Método para registrar un nuevo usuario
   register(userData: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/register`, userData).pipe(
       catchError((error) => {

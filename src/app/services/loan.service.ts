@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -10,25 +11,29 @@ export class LoanService {
 
   constructor(private http: HttpClient) { }
 
-  // Método para crear un nuevo préstamo
+  // Crea un nuevo préstamo
   createLoan(id_cliente: number, monto: number, plazo_meses: number, tasa_interes: number): Observable<any> {
     const loanData = { id_cliente, monto, plazo_meses, tasa_interes };
-    return this.http.post(`${this.baseUrl}/create`, loanData);
+    return this.http.post(`${this.baseUrl}/create`, loanData)
+      .pipe(catchError((error) => throwError(() => error)));
   }
 
-  // Método para obtener todos los préstamos de un cliente
+  // Obtiene los préstamos de un cliente
   getLoansByClient(id_cliente: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/cliente/${id_cliente}`);
+    return this.http.get(`${this.baseUrl}/cliente/${id_cliente}`)
+      .pipe(catchError((error) => throwError(() => error)));
   }
 
-  // Método para obtener un préstamo específico de un cliente
+  // Obtiene un préstamo específico por ID
   getLoanById(id_cliente: number, id_prestamo: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${id_cliente}/${id_prestamo}`);
+    return this.http.get(`${this.baseUrl}/${id_cliente}/${id_prestamo}`)
+      .pipe(catchError((error) => throwError(() => error)));
   }
 
-  // Método para actualizar el estado de un préstamo
+  // Actualiza el estado de un préstamo
   updateLoanStatus(id_cliente: number, id_prestamo: number, estado: string): Observable<any> {
     const updateData = { estado };
-    return this.http.put(`${this.baseUrl}/${id_cliente}/prestamo/${id_prestamo}/estado`, updateData);
+    return this.http.put(`${this.baseUrl}/${id_cliente}/prestamo/${id_prestamo}/estado`, updateData)
+      .pipe(catchError((error) => throwError(() => error)));
   }
 }

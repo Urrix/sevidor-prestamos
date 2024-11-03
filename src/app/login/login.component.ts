@@ -9,17 +9,21 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./login.component.sass']
 })
 export class LoginComponent {
+  // Inyección de dependencias para autenticación, formularios y navegación
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
 
+  // Definición y validación del formulario de inicio de sesión
   loginForm: FormGroup = this.fb.group({
     nombre_usuario: ['', Validators.required],
     contrasena: ['', Validators.required],
   });
 
+  // Método para manejar el inicio de sesión del usuario
   login() {
     if (this.loginForm.valid) {
+      // Llama al servicio de autenticación
       this.authService.login(
         this.loginForm.value.nombre_usuario,
         this.loginForm.value.contrasena
