@@ -1,0 +1,44 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Sistema de Préstamos</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+
+                <!-- Enlace para "Inicio" visible siempre -->
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/">Inicio</a>
+                </li>
+
+                <!-- Enlace para "Solicitar Préstamo" solo visible para agentes -->
+                <li class="nav-item" *ngIf="isAuthenticated && userRole === 'agente'">
+                    <a class="nav-link" routerLink="/solicitar-prestamo">Solicitar Préstamo</a>
+                </li>
+
+                <!-- Enlace para "Mis Préstamos" solo visible para clientes -->
+                <li class="nav-item" *ngIf="isAuthenticated && userRole === 'cliente'">
+                    <a class="nav-link" routerLink="/mis-prestamos">Mis Préstamos</a>
+                </li>
+
+                <!-- Enlace para "Perfil" solo visible si el usuario está autenticado -->
+                <li class="nav-item" *ngIf="isAuthenticated">
+                    <a class="nav-link">{{ userName }}</a>
+                </li>
+
+                <!-- Botón de "Cerrar Sesión" visible si el usuario está autenticado -->
+                <li class="nav-item" *ngIf="isAuthenticated">
+                    <button class="btn btn-outline-danger" (click)="logout()">Cerrar Sesión</button>
+                </li>
+
+                <!-- Enlace para "Iniciar Sesión" solo visible si el usuario no está autenticado -->
+                <li class="nav-item" *ngIf="!isAuthenticated">
+                    <a class="nav-link" routerLink="/login">Iniciar Sesión</a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>

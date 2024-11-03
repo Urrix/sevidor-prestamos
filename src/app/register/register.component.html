@@ -1,65 +1,49 @@
-<section class="section">
+<section class="py-5">
   <div class="container">
-    <h1 class="title">Registro</h1>
-    <form [formGroup]="registerForm" (ngSubmit)="register()" class="box">
-      <div class="field">
-        <label class="label">Nombre</label>
-        <div class="control">
-          <input class="input" type="text" formControlName="nombre" placeholder="Nombre" required />
-        </div>
+    <h1 class="display-5 mb-4">Registro</h1>
+    <form [formGroup]="registerForm" (ngSubmit)="register()" class="p-4 border rounded shadow-sm bg-light">
+      <div class="mb-3">
+        <label for="nombre" class="form-label">Nombre</label>
+        <input id="nombre" type="text" class="form-control" formControlName="nombre" placeholder="Nombre" required />
       </div>
 
-      <div class="field">
-        <label class="label">Dirección</label>
-        <div class="control">
-          <input class="input" type="text" formControlName="direccion" placeholder="Dirección" />
-        </div>
+      <div class="mb-3">
+        <label for="direccion" class="form-label">Dirección</label>
+        <input id="direccion" type="text" class="form-control" formControlName="direccion" placeholder="Dirección" />
       </div>
 
-      <div class="field">
-        <label class="label">Teléfono</label>
-        <div class="control">
-          <input class="input" type="text" formControlName="telefono" placeholder="Teléfono" />
-        </div>
+      <div class="mb-3">
+        <label for="telefono" class="form-label">Teléfono</label>
+        <input id="telefono" type="text" class="form-control" formControlName="telefono" placeholder="Teléfono" />
       </div>
 
-      <div class="field">
-        <label class="label">Correo</label>
-        <div class="control">
-          <input class="input" type="email" formControlName="correo" placeholder="Correo" required />
-        </div>
+      <div class="mb-3">
+        <label for="correo" class="form-label">Correo</label>
+        <input id="correo" type="email" class="form-control" formControlName="correo" placeholder="Correo" required />
       </div>
 
-      <div class="field">
-        <label class="label">Tipo de Usuario</label>
-        <div class="control">
-          <div class="select">
-            <select formControlName="tipo_usuario" required>
-              <option value="cliente">Cliente</option>
-              <option value="agente">Agente</option>
-            </select>
-          </div>
-        </div>
+      <div class="mb-3">
+        <label for="tipo_usuario" class="form-label">Tipo de Usuario</label>
+        <select id="tipo_usuario" class="form-select" formControlName="tipo_usuario" required>
+          <option value="cliente">Cliente</option>
+          <option value="agente">Agente</option>
+        </select>
       </div>
 
-      <div class="field">
-        <label class="label">Nombre de Usuario</label>
-        <div class="control">
-          <input class="input" type="text" formControlName="nombre_usuario" placeholder="Nombre de usuario" required />
-        </div>
+      <div class="mb-3">
+        <label for="nombre_usuario" class="form-label">Nombre de Usuario</label>
+        <input id="nombre_usuario" type="text" class="form-control" formControlName="nombre_usuario"
+          placeholder="Nombre de usuario" required />
       </div>
 
-      <div class="field">
-        <label class="label">Contraseña</label>
-        <div class="control">
-          <input class="input" type="password" formControlName="contrasena" placeholder="Contraseña" required />
-        </div>
+      <div class="mb-3">
+        <label for="contrasena" class="form-label">Contraseña</label>
+        <input id="contrasena" type="password" class="form-control" formControlName="contrasena"
+          placeholder="Contraseña" required />
       </div>
 
-      <div class="field">
-        <div class="control">
-          <button type="submit" class="button is-primary" [disabled]="registerForm.invalid">Registrar</button>
-        </div>
+      <div class="mb-3">
+        <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">Registrar</button>
       </div>
     </form>
   </div>

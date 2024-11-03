@@ -1,16 +1,18 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   templateUrl: './login.component.html',
-  imports: [ReactiveFormsModule],
+  styleUrls: ['./login.component.sass']
 })
 export class LoginComponent {
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
+  private router = inject(Router);
+
   loginForm: FormGroup = this.fb.group({
     nombre_usuario: ['', Validators.required],
     contrasena: ['', Validators.required],
@@ -18,10 +20,13 @@ export class LoginComponent {
 
   login() {
     if (this.loginForm.valid) {
-      this.authService.login(this.loginForm.value).subscribe(
-        (res: any) => {
-          this.authService.setToken(res.token);
+      this.authService.login(
+        this.loginForm.value.nombre_usuario,
+        this.loginForm.value.contrasena
+      ).subscribe(
+        () => {
           console.log("Inicio de sesión exitoso");
+          this.router.navigate(['/home']);
         },
         (err) => console.error("Error en el inicio de sesión", err)
       );
