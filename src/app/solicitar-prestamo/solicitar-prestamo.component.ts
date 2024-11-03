@@ -8,13 +8,14 @@ import { LoanService } from '../services/loan.service';
   styleUrls: ['./solicitar-prestamo.component.sass']
 })
 export class SolicitarPrestamoComponent {
-  prestamoForm: FormGroup;
-  amortizacionTable: any[] = [];
+  prestamoForm: FormGroup; // Formulario para capturar datos del préstamo
+  amortizacionTable: any[] = []; // Tabla de amortización calculada
 
   private loanService = inject(LoanService);
   private fb = inject(FormBuilder);
 
   constructor() {
+    // Inicializa el formulario de préstamo con validaciones
     this.prestamoForm = this.fb.group({
       id_cliente: ['', [Validators.required]],
       monto: [0, [Validators.required, Validators.min(1)]],
@@ -22,20 +23,26 @@ export class SolicitarPrestamoComponent {
       tasa_interes: [0, [Validators.required, Validators.min(0.1), Validators.max(100)]],
     });
 
+    // Calcula la amortización automáticamente al cambiar valores del formulario
     this.prestamoForm.valueChanges.subscribe(() => {
       this.calcularAmortizacion();
     });
   }
 
+  // Solicita un nuevo préstamo usando los datos del formulario
   solicitarPrestamo() {
     const { id_cliente, monto, plazo_meses, tasa_interes } = this.prestamoForm.value;
 
     this.loanService.createLoan(id_cliente, monto, plazo_meses, tasa_interes).subscribe({
-      next: () => console.log("Préstamo solicitado con éxito"),
+      next: () => {
+        console.log("Préstamo solicitado con éxito");
+        this.resetForm(); // Reinicia el formulario y la tabla de amortización
+      },
       error: (err) => console.error("Error al solicitar el préstamo", err),
     });
   }
 
+  // Calcula la tabla de amortización para el préstamo
   calcularAmortizacion() {
     const monto = this.prestamoForm.value.monto;
     const plazo_meses = this.prestamoForm.value.plazo_meses;
@@ -44,7 +51,6 @@ export class SolicitarPrestamoComponent {
     if (monto > 0 && plazo_meses > 0 && tasa_interes > 0) {
       const capitalMensual = monto / plazo_meses;
       this.amortizacionTable = [];
-
       let saldo = monto;
 
       for (let i = 1; i <= plazo_meses; i++) {
@@ -63,5 +69,16 @@ export class SolicitarPrestamoComponent {
     } else {
       this.amortizacionTable = [];
     }
+  }
+
+  // Reinicia el formulario y limpia la tabla de amortización
+  resetForm() {
+    this.prestamoForm.reset({
+      id_cliente: '',
+      monto: 0,
+      plazo_meses: 0,
+      tasa_interes: 0,
+    });
+    this.amortizacionTable = [];
   }
 }
