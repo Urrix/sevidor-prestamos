@@ -1,0 +1,26 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">Iniciar sesión</h1>
+    <form [formGroup]="loginForm" (ngSubmit)="login()" class="box">
+      <div class="field">
+        <label class="label">Nombre de Usuario</label>
+        <div class="control">
+          <input class="input" type="text" formControlName="nombre_usuario" placeholder="Nombre de usuario" required />
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Contraseña</label>
+        <div class="control">
+          <input class="input" type="password" formControlName="contrasena" placeholder="Contraseña" required />
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <button type="submit" class="button is-primary" [disabled]="loginForm.invalid">Iniciar sesión</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
